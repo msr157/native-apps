@@ -15,18 +15,31 @@ import AddListModal from "./Components/AddListModal";
 
 export default function App() {
   const [addTodoVisible, setAddTodoVisible] = useState(false);
-  const [listData, setListData] = useState(tempData);
+  const [lists, setLists] = useState(tempData);
 
   const toggleAddModal = () => {
     setAddTodoVisible(!addTodoVisible);
   };
 
   const renderList = (item) => {
-    return <TodoList list={item}></TodoList>;
+    return <TodoList list={item} updateList={updateList} />;
   };
 
-  addList = (list) => {
+  // const addList = (list) => {
+  //   setLists({
+  //     list: [...lists, { ...list, id: lists.length + 1, todos: [] }],
+  //   });
+  // };
+  const addList = (list) => {
+    setLists([...lists, { ...list, id: lists.length + 1, todos: [] }]);
+  };
 
+  const updateList = (list) => {
+    setLists(
+      lists.map((item) => {
+        return item.id === list.id ? item : item;
+      })
+    );
   };
 
   return (
@@ -36,7 +49,7 @@ export default function App() {
         visible={addTodoVisible}
         onRequestClose={() => toggleAddModal()}
       >
-        <AddListModal closeModal={toggleAddModal} addList={addList}/>
+        <AddListModal closeModal={toggleAddModal} addList={addList} />
       </Modal>
 
       <View style={{ flexDirection: "row" }}>
@@ -60,13 +73,14 @@ export default function App() {
 
       <View style={{ height: 275, paddingLeft: 32 }}>
         <FlatList
-          data={listData}
+          data={lists}
           keyExtractor={(item) => item.name}
           horizontal={true}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             return renderList(item);
           }}
+          keyboardShouldPersistTaps="always"
         />
       </View>
     </View>
